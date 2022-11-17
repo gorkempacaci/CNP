@@ -9,8 +9,6 @@
 :- use_module(cnp).
 :- use_module(cnp_math).
 
-:- multifile cnp:def/2.
-
 % externally defining a map_f in terms of fold
 cnp:def(map_f(P),
   proj(and(const(b0, []),
@@ -18,6 +16,18 @@ cnp:def(map_f(P),
                          proj(cons, [a->b1, b->b, ab->ab])),
                      [a->a, b->b, ab->ab]))),
        [as->as, b->bs])).
+
+% samples for ascendant predicate
+cnp:def(parent, data([parent,       child],
+                     [[edwardVII,   georgeV],
+                      [georgeV,     georgeVI],
+                      [georgeVI,    elizabethII],
+                      [elizabethII, charlesIII]]) ).
+
+cnp:def(ancestor, or(proj(parent, [parent->ancestor, child->descendant]),
+                     proj(and(proj(parent, [parent->ancestor, child->intermediate]),
+                              proj(ancestor, [ancestor->intermediate, descendant->descendant])),
+                          [ancestor->ancestor, descendant->descendant])) ).
 
 :- begin_tests(cnp).
 
@@ -54,4 +64,6 @@ test(if_1) :-                     cnp(if(const(a, []), id, flip), _{a:[], b:B}),
 test(if_2) :-                     cnp(if(const(a, []), id, flip), _{a:1, b:B}), !, B = -1.
 test(papply_1) :-                 cnp(papply(const(a,[]), id), _{b:B}), !, B = [].
 test(papply_infix) :-             cnp(id ^@ const(a,[]), _{b:B}), !, B = [].
+test(ancestor_0) :-               cnp(ancestor, _{ancestor:elizabethII, descendant:charlesIII}).
+test(ancestor_1) :-               cnp(ancestor, _{ancestor:elizabeth})
 :- end_tests(cnp).

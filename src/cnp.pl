@@ -47,8 +47,7 @@ cnp(and(P, Q), Args) :-
 cnp(or(P, Q), Args) :- 
   joint_args_unify(P, PArgs, Q, QArgs, Args),
   !,
-  (cnp(P, PArgs) ; cnp(Q, QArgs)),
-  !.
+  (cnp(P, PArgs) ; cnp(Q, QArgs)).
 
 
 % == Projection ==
@@ -62,8 +61,7 @@ cnp(proj(S, Projs), Args) :-
   !,
   Args=ProjArgs,
   dicts_unify_through_projs(SArgs, Projs, ProjArgs),
-  cnp(S, SArgs),
-  !.
+  cnp(S, SArgs).
 % infix for proj
 cnp(S @ Projs, Args) :-
   cnp(proj(S, Projs), Args),
@@ -148,8 +146,17 @@ cnp(P, Args) :-
 % user-defined predicates
 cnp(P, Args) :- 
   cnp:def(P, Body),
-  cnp(Body, Args),
-  !.
+  !,
+  cnp(Body, Args).
+
+% Data or Fact input
+
+% cnp(data(Names, Data), Args).
+
+cnp(data(Names, Data), Args) :-
+  !,
+  member(D, Data),
+  names_and_terms_to_args(Names, D, Args).
 
 % no native, library or user-defined predicate is matched.
 cnp(P, Args) :-
@@ -206,6 +213,7 @@ names(papply(App, S), Names) :-
 names(S ^@ App, Names) :-
   names(papply(App, S), Names),
   !.
+names(data(Names, _), Names) :- !.
 names(T, _) :- throw_message_with_term('Cannot find names for:', T).
 
 % makes an args (dict) for the given names
@@ -213,6 +221,12 @@ names_to_args([], _{}).
 names_to_args([N|Names], Args) :-
   names_to_args(Names, ArgsI),
   Args=ArgsI.put([N=_]).
+
+names_and_terms_to_args([], [], _{}).
+names_and_terms_to_args([N|Names], [T|Terms], Args) :-
+  names_and_terms_to_args(Names, Terms, ArgsI),
+  Args=ArgsI.put([N=T]).
+
 
 % unifies logical operator args P and Q using their names(_).
 % joint_args_unify(P, PArgs, Q, QArgs, Args)
