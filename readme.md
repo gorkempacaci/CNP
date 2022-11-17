@@ -1,6 +1,6 @@
 Copyright 2022 Görkem Paçacı
 
-= CNP Meta-interpreter =
+= CNP Meta-interpreter
 
 This is an implementation of the CNP (Combilog with Names and Projection) Meta-interpreter written in Prolog, with a small math library attached. 
 
@@ -8,7 +8,7 @@ This is an implementation of the CNP (Combilog with Names and Projection) Meta-i
 
 > Paçacı, G., Johnson, D., McKeever, S., & Hamfelt, A. (2019, June). Why did you do that?. In International Conference on Computational Science (pp. 334-345). Springer, Cham.
 
-=== Release Notes ===
+=== Release Notes
 
 In this 2022 version the recursion operators (`fold`s) have only one operand, meaning they're in line with the familiar implementations from functional programming. The default value assumed for the second operand is assumed to be `id`. For example, the new `fold(cons)` is equivalent to the previous `fold(cons,id)`. 
 
