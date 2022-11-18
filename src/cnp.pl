@@ -7,7 +7,7 @@
 
 :- module(cnp, [cnp/2, def/2, lib/3, names/2,
                 op(740, xfx, ^), op(741, xfx, \/),
-                op(750, xfy, ^@), op(760, xfy, @)]).
+                op(750, xfy, ^.), op(760, xfy, @)]).
 
 % def(_Name, _Body). allowing user-defined predicates 
 :- multifile def/2.
@@ -35,20 +35,37 @@ cnp(const(N,T), Args) :-
 % == Logic operators ==
 
 % and(P, Q). P and Q must have at least one name in common.
-cnp(P ^ Q, Args) :-
-  cnp(and(P, Q), Args).
 cnp(and(P, Q), Args) :- 
   joint_args_unify(P, PArgs, Q, QArgs, Args),
   !,
   cnp(P, PArgs),
   cnp(Q, QArgs).
+cnp(P ^ Q, Args) :- cnp(and(P, Q), Args).
+
+% and-compose P and Q, projecting disjoint arguments. 
+% andc(P, Q) where P:{a,b} and Q:{b,c} gives andc(P,Q):{a,c}.
+cnp(andc(P, Q), Args) :-
+  !,
+  joint_args_unify(P, PArgs, Q, QArgs, AllArgs),
+  get_disjoint_names(P, Q, Names),
+  names_to_args(Names, DisjointArgs),
+  DisjointArgs:<AllArgs,
+  cnp(P, PArgs),
+  cnp(Q, QArgs),
+  DisjointArgs=Args.
+% infix for papply
+cnp(P ^. Q, Args) :-
+  !,
+  cnp(andc(P, Q), Args).
 
 % or(P, Q). P and Q must have at least one name in common.
 cnp(or(P, Q), Args) :- 
   joint_args_unify(P, PArgs, Q, QArgs, Args),
   !,
   (cnp(P, PArgs) ; cnp(Q, QArgs)).
-
+cnp(P \/ Q, Args) :-
+  !,
+  cnp(or(P, Q), Args).
 
 % == Projection ==
 
@@ -92,7 +109,6 @@ cnp(map(P), _{as:[A|As], bs:[B|Bs]}) :-
   !.
 
 % filter(P) : {as, bs} while names(P, [a])
-% filter(P) :
 cnp(filter(_), _{as:[], bs:[]}) :- !.
 cnp(filter(P), _{as:[A|As], bs:Bs}) :-
   (cnp(P, _{a:A})) -> (cnp(filter(P), _{as:As, bs:Bsi}), Bs=[A|Bsi]) ; cnp(filter(P), _{as:As, bs:Bs}),
@@ -110,30 +126,8 @@ cnp(if(C,T,F), Args) :-
   names_to_args(CNames, ArgsC),
   names_to_args(TNames, Args),
   ArgsC:<Args,
-  ((TNames=FNames) -> true ; throw_message_with_term('if T and F do not match:', if(C,T,F))),
+  ((lists_equal_as_sets(TNames,FNames)) -> true ; throw_message_with_term('if T and F do not match:', if(C,T,F))),
   ((cnp(C, ArgsC)) -> cnp(T, Args) ; cnp(F, Args)).
-
-% == Other higher-order ==
-
-% papply P with C, projecting unclosed arguments. First C is run.
-% papply(Application, SourcePredicate)
-cnp(papply(App, S), Args) :-
-  names(App, AppNames),
-  names_to_args(AppNames, AppArgs),
-  names(S, SNames),
-  names_to_args(SNames, SArgs),
-  subtract(SNames, AppNames, Names),
-  names_to_args(Names, ArgsMade),
-  ArgsMade:<SArgs,
-  AppArgs:<SArgs,
-  cnp(App, AppArgs),
-  cnp(S, SArgs),
-  ArgsMade=Args,
-  !.
-% infix for papply
-cnp(S ^@ App, Args) :-
-  cnp(papply(App, S), Args), 
-  !.
 
 % == Extensions ==
 
@@ -152,7 +146,6 @@ cnp(P, Args) :-
 % Data or Fact input
 
 % cnp(data(Names, Data), Args).
-
 cnp(data(Names, Data), Args) :-
   !,
   member(D, Data),
@@ -205,13 +198,11 @@ names(if(C,T,_), Ns) :-
   names(T, Ns),
   union(Cs, Ns, Ns),
   !.
-names(papply(App, S), Names) :-
-  names(S, SNames),
-  names(App, AppNames),
-  subtract(SNames, AppNames, Names),
+names(andc(P, Q), Names) :-
+  get_disjoint_names(P, Q, Names),
   !.
-names(S ^@ App, Names) :-
-  names(papply(App, S), Names),
+names(P ^. Q, Names) :-
+  names(andc(P, Q), Names),
   !.
 names(data(Names, _), Names) :- !.
 names(T, _) :- throw_message_with_term('Cannot find names for:', T).
@@ -250,3 +241,19 @@ dicts_unify_through_projs(DictO, [O->N|Rest], DictN) :- % projections [old->new,
   get_dict(N, DictN, Vn),
   Vo=Vn,
   dicts_unify_through_projs(DictO, Rest, DictN).
+
+% get names that are not common to P and Q.
+get_disjoint_names(P, Q, Names) :-
+  names(P, PNames),
+  names(Q, QNames),
+  union(PNames, QNames, UNames),
+  intersection(PNames, QNames, INTNames),
+  subtract(UNames, INTNames, Names).
+
+% two lists are equal as sets
+lists_equal_as_sets(As, Bs) :-
+  union(As, Bs, Un),
+  length(As, L1),
+  length(Bs, L2),
+  length(Un, LU),
+  L1=LU, L2=LU.

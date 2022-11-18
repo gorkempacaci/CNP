@@ -1,5 +1,7 @@
 Copyright 2022 Görkem Paçacı
 
+Contact: gorkem.pacaci@im.uu.se, gorkempacaci@gmail.com
+
 # CNP Meta-interpreter
 
 This is an implementation of the CNP (Combilog with Names and Projection) Meta-interpreter written in Prolog, with a small math library attached. 
@@ -18,7 +20,23 @@ CNP is a meta-language implemented in Prolog to offer Functional-Programming-lik
 
 The main use for CNP is program synthesis. Because there is no variables, CNP programs can be inductuvely synthesized by a few examples by exploiting the reverse semantics of the operators (See Pacaci et.al. 2017).
 
+This meta-interpreter is provided so CNP programs synthesized via [Parallel CombInduce](https://github.com/gorkempacaci/CombInduce) or [RICE](https://github.com/UppsalaIM/rice) can be executed independantly.
+
 ## Example
+
+Examples throughout this document are executed via [SWI Prolog](https://www.swi-prolog.org). To start, load `swipl` and consult the source files:
+```
+$ swipl
+Welcome to SWI-Prolog (threaded, 64 bits, version 8.0.3)
+
+?- consult(['cnp.pl', 'math.pl', 'tests.pl']).
+true.
+
+?- run_tests.
+% PL-Unit: cnp ...................................... done
+% All 38 tests passed
+true.
+```
 
 For example, in Prolog you can write this example of `ancestor` relation as such:
 
@@ -62,7 +80,57 @@ A = _86{ancestor:georgeVI, descendant:charlesIII} ;
 
 ## Composing and running CNP programs
 
-Work in progress
+CNP programs are run through the `cnp` predicate:
+```
+cnp(CNPProgram, Args).
+```
+
+For example, using the elementary predicate `id : {a, b}`:
+```
+?- cnp(id, _{a:1, b:B}).
+B = 1.
+```
+
+The second argument `Args` is used to faciltate input/output with the CNP program through the meta-interpreter (`cnp`). Type of `Args` is a `dict`, which is a structure in the form Tag{name:term, ...}. CNP never binds the Tag, so CNP tuples always look like `_{ ... }`.
+
+Programs of any complexity can be composed and run via putting it in the first argument of the `cnp` predicate:
+```
+?- cnp(foldleft(cons), _{b0:[], as:[1,2,3], b:List}).
+List = [3, 2, 1].
+```
+
+CNP is built on top of Horn clauses (as in Prolog), so any CNP pure program can be run in reverse, like so:
+```
+?- cnp(foldleft(cons), _{b0:B0, as:AS, b:[3,2,1]}).
+B0 = [3, 2, 1],
+AS = [].
+```
+
+## Summary of CNP syntax
+
+Here is a brief summary of CNP language. Examples can be found in `tests.pl`. 
+
+### Elementary predicates
+`id : {a, b}` succeeds when values of `a` and `b` are identical. 
+`cons : {a, b, ab}` succeeds when value of `ab` is a list where head is value of `a` and tail is `b`.
+`const(N, T) : {N}` succeeds when value of N is T. This is used to introduce constants with a name, like `const(nil, [])`.
+
+### Logic operators
+`and(P, Q) : N` (`P ^ Q`) gives conjunction of `P : N1` and `Q : N2`, similar to an inner join from Relational Algebra. Names `N` is the union of `N1` an `N2`, and intersection of `N1` and `N2` must be non-empty.
+`or(P, Q)` (`P \/ Q`) gives disjunction, where names work like in `and`. 
+`andc(P, Q)` (`P ^. Q`) gives relational composition. It's equivalent to `proj(and(P, Q), D)` where `D` projects disjoint arguments of `P` and `Q`. For example, if `P : {a, b}` and `Q : {b, c}`, `andc(P, Q) : {a, c}`.
+
+### Recursion operators
+
+`fold(P) : {b0, as, b}` where `P : {a, b, ab}` gives a right fold, and `foldleft(P)` a left fold.
+
+`map(P) : {as, bs}` where `P : {a, b}` gives a map from `as` to `bs`. If `P` is reversible, `map(P)` is reversible too. 
+
+`filter(P) : {as, bs}` where `P : {a}` gives a filter from `as` to `bs`. For example, `filter(neg, _{as:[1,-2,3], bs:Bs})` succeeds for `Bs = [-2]`.
+
+### Conditional operators
+
+`if(C, T, F)` succeeds as `T` if `C` succeeds, otherwise it succeeds as `F`. Names of `T` and `F` should be identical, and names of `C` should be a subset of those.
 
 ## Extending the interpreter
 

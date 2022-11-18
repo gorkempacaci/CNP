@@ -6,7 +6,7 @@
 % You should have received a copy of the GNU Lesser General Public License along with CNP Meta-interpreter. If not, see <https://www.gnu.org/licenses/>.
 
 
-:- module(cnp_math, []).
+:- module(math, []).
 :- multifile cnp:lib/3.
 
 cnp:lib(+,    [a,b,ab], [_{a:A, b:B, ab:C}] >> (C is A+B)). % using anonymous predicates
@@ -16,11 +16,11 @@ cnp:lib(//,   [a,b,ab], [_{a:A, b:B, ab:C}] >> (C is A/B)).
 cnp:lib(eq,   [a,b],    [_{a:A, b:B}] >> (A =:= B)).
 cnp:lib(lt,   [a,b],    [_{a:A, b:B}] >> (A<B)).
 cnp:lib(lte,  [a,b],    [_{a:A, b:B}] >> (A =< B)).
-cnp:lib(flip, [a,b],    cnp_math:flip). % optional syntax using predicate name
+cnp:lib(flip, [a,b],    math:flip). % optional syntax using predicate name
 cnp:lib(neg,  [a],      [_{a:A}] >> (A<0)).
 cnp:lib(pos,  [a],      [_{a:A}] >> (A>0)).
 cnp:lib(zero, [a],      [_{a:A}] >> (A=0)).
 cnp:lib(nil,  [a],      [_{a:A}] >> (A=[])).
 
-flip(_{a:A, b:B}) :-
-  B is A * -1.
+flip(_{a:A, b:B}) :-  (ground(B), A is B * -1) ; 
+                      (ground(A), B is A * -1).
