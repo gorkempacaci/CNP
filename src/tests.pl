@@ -60,8 +60,8 @@ test(proj_id_fail1) :-         \+ cnp(proj(id, [c->x]), _{x:_}).
 test(proj_id_fail2) :-         \+ cnp(proj(id, [a->x]), _{x:2, y:_}).
 test(proj_and_proj) :-            cnp(proj(and(proj(id, [a->a, b->x]), proj(id, [a->x, b->c])), [a->a, c->b]), _{a:3, b:B}), !, B=3.
 test(proj_and_proj) :-       once(cnp(proj(and(proj(id, [a->a, b->x]), proj(id, [a->x, b->c])), [a->a, c->b]), _{a:3, b:_})).
-test(fold_cons) :-                cnp(fold(cons), _{b0:[], as:[1,2,3], b:[1,2,3]}).
-test(fold_plus) :-                cnp(fold(+), _{b0:0, as:[1,2,3], b:6}).
+test(fold_cons) :-           once(cnp(fold(cons), _{b0:[], as:[1,2,3], b:[1,2,3]})).
+test(fold_plus) :-           once(cnp(fold(+), _{b0:0, as:[1,2,3], b:6})).
 test(foldleft_cons) :-            cnp(foldleft(cons), _{b0:[], as:[1,2,3], b:[3,2,1]}).
 test(map_id) :-                   cnp(map(id), _{as:[1,2,3], bs:[1,2,3]}).
 test(map_flip) :-                 cnp(map(flip), _{as:[1,-2,3], bs:[-1,2,-3]}).

@@ -107,16 +107,20 @@ AS = [1, 2, 3].
 
 or it can be used to iterate through other possible values for the arguments:
 ```
-cnp(foldleft(cons), _{b0:B0, as:AS, b:[3,2,1]}).
+?- cnp(foldleft(cons), _{b0:B0, as:AS, b:[3,2,1]}).
 B0 = [3, 2, 1],
 AS = [] ;
 B0 = [2, 1],
-AS = [3].
+AS = [3] ;
+B0 = [1],
+AS = [2, 3] ;
+B0 = [],
+AS = [1, 2, 3] ;
 ```
 
 ## Summary of CNP syntax
 
-Here is a brief summary of CNP language. Examples can be found in `tests.pl`. 
+Here is a brief summary of CNP language. Examples can be found in `tests.pl`. Names of a predicate expression is displayed as `P : {a, b, c}`. There is no order to names as they're given as a set. 
 
 ### Elementary predicates
 `id : {a, b}` succeeds when values of `a` and `b` are identical. 

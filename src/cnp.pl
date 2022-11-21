@@ -89,16 +89,16 @@ cnp(S @ Projs, Args) :-
 % fold(P) : {b0, as, b} while names(P, [a, b, ab])
 cnp(fold(_), _{b0:B0, as:[], b:B0}).
 cnp(fold(P), _{b0:B0, as:[A|As], b:B}) :-
+  !,
   cnp(fold(P), _{b0:B0, as:As, b:Bi}),
-  cnp(P, _{a:A, b:Bi, ab:B}),
-  !.
+  cnp(P, _{a:A, b:Bi, ab:B}).
 
 % foldleft(P) : {b0, as, b} while names(P, [a, b, ab])
 cnp(foldleft(_), _{b0:B0, as:[], b:B0}).
 cnp(foldleft(P), _{b0:B0, as:[A|As], b:B}) :-
+  !,
   cnp(P, _{a:A, b:B0, ab:Bi}),
-  cnp(foldleft(P), _{b0:Bi, as:As, b:B}),
-  !.
+  cnp(foldleft(P), _{b0:Bi, as:As, b:B}).
 
 % map(P) : {as, bs} while names(P, [a, b])
 % map(P), names(P) must be [a, b]
@@ -152,8 +152,8 @@ cnp(data(Names, Data), Args) :-
   names_and_terms_to_args(Names, D, Args).
 
 % no native, library or user-defined predicate is matched.
-cnp(P, Args) :-
-  throw_message_with_term('CNP does not recognize program:', P:Args).
+% cnp(P, Args) :-
+%   throw_message_with_term('CNP does not recognize program:', P:Args).
 
 % HELPERS
 
