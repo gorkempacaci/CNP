@@ -4,7 +4,7 @@ Contact: gorkem.pacaci@im.uu.se, gorkempacaci@gmail.com
 
 # CNP Meta-interpreter
 
-This is an implementation of the CNP (Combilog with Names and Projection) Meta-interpreter written in Prolog, with a small math library attached. 
+This is an implementation of the CNP (Combilog with Names and Projection) Meta-interpreter written in Prolog, with a small math library attached. For a formal description see:
 
 > Paçacı, G., McKeever, S., & Hamfelt, A. (2017, June). Compositional Relational Programming with Name Projection and Compositional Synthesis. In International Andrei Ershov Memorial Conference on Perspectives of System Informatics (pp. 306-321). Springer, Cham.
 
@@ -20,7 +20,7 @@ CNP is a meta-language implemented in Prolog to offer Functional-Programming-lik
 
 The main use for CNP is program synthesis. Because there is no variables, CNP programs can be inductuvely synthesized by a few examples by exploiting the reverse semantics of the operators (See Pacaci et.al. 2017).
 
-This meta-interpreter is provided so CNP programs synthesized via [Parallel CombInduce](https://github.com/gorkempacaci/CombInduce) or [RICE](https://github.com/UppsalaIM/rice) can be executed independantly.
+This meta-interpreter is provided so CNP programs synthesized via [Parallel CombInduce](https://github.com/gorkempacaci/CombInduce) or [RICE](https://github.com/UppsalaIM/rice) can be executed independently.
 
 ## Example
 
@@ -101,9 +101,17 @@ List = [3, 2, 1].
 
 CNP is built on top of Horn clauses (as in Prolog), so any CNP pure program can be run in reverse, like so:
 ```
-?- cnp(foldleft(cons), _{b0:B0, as:AS, b:[3,2,1]}).
+?- cnp(foldleft(cons), _{b0:[], as:AS, b:[3,2,1]}).
+AS = [1, 2, 3].
+```
+
+or it can be used to iterate possible other values for the arguments:
+```
+cnp(foldleft(cons), _{b0:B0, as:AS, b:[3,2,1]}).
 B0 = [3, 2, 1],
-AS = [].
+AS = [] ;
+B0 = [2, 1],
+AS = [3].
 ```
 
 ## Summary of CNP syntax

@@ -94,7 +94,7 @@ cnp(fold(P), _{b0:B0, as:[A|As], b:B}) :-
   !.
 
 % foldleft(P) : {b0, as, b} while names(P, [a, b, ab])
-cnp(foldleft(_), _{b0:B0, as:[], b:B0}) :- !.
+cnp(foldleft(_), _{b0:B0, as:[], b:B0}).
 cnp(foldleft(P), _{b0:B0, as:[A|As], b:B}) :-
   cnp(P, _{a:A, b:B0, ab:Bi}),
   cnp(foldleft(P), _{b0:Bi, as:As, b:B}),
