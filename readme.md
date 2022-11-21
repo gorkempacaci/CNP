@@ -152,8 +152,7 @@ To define a library predicate, you add another clause for the cnp:lib, as can be
 ```
 cnp:lib(lt,   [a,b],    [_{a:A, b:B}] >> (A<B)).
 ```
-cnp:lib has three arguments, first gives a name for the predicate, second gives the argument names, and the third gives an anonymous predicate to execute. Library predicates are used to implement 
-And then you can use this predicate as a CNP program:
+cnp:lib has three arguments, first gives a name for the predicate, second gives the argument names, and the third gives an anonymous predicate to execute. Then you can use this predicate as a CNP program:
 ```
 ?- cnp(lt, _{a:3, b:4}).
 true .
