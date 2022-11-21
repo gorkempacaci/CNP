@@ -16,9 +16,9 @@ In this 2022 version the recursion operators (`fold`s) have only one operand, me
 
 ## What is CNP?
 
-CNP is a meta-language implemented in Prolog to offer Functional-Programming-like higher order operators in horn clause programs (like Prolog). CNP does this through varible-free syntax, and as a result its syntax is quite verbose, yet better than its predecessor Combilog, and much better than any comparable alternatives like Quines PFL or SKI calculus. The verbosity is a result of having to express binding of many input/output arguments in a single composition without consulting to variables.
+CNP is a meta-language implemented in Prolog to offer Functional-Programming-like higher order operators in horn clause programs (like Prolog). CNP does this through variable-free syntax, and as a result its syntax is quite verbose, yet better than its predecessor Combilog, and much better than any comparable alternatives like Quines PFL or SKI calculus. The verbosity is a result of having to express binding of many input/output arguments in a single composition without consulting to variables.
 
-The main use for CNP is program synthesis. Because there is no variables, CNP programs can be inductuvely synthesized by a few examples by exploiting the reverse semantics of the operators (See Pacaci et.al. 2017).
+The main use for CNP is program synthesis. Because there is no variables, CNP programs can be inductively synthesized by a few examples by exploiting the reverse semantics of the operators (See Pacaci et.al. 2017).
 
 This meta-interpreter is provided so CNP programs synthesized via [Parallel CombInduce](https://github.com/gorkempacaci/CombInduce) or [RICE](https://github.com/UppsalaIM/rice) can be executed independently.
 
@@ -91,7 +91,7 @@ For example, using the elementary predicate `id : {a, b}`:
 B = 1.
 ```
 
-The second argument `Args` is used to faciltate input/output with the CNP program through the meta-interpreter (`cnp`). Type of `Args` is a `dict`, which is a structure in the form Tag{name:term, ...}. CNP never binds the Tag, so CNP tuples always look like `_{ ... }`.
+The second argument `Args` is used to facilitate input/output with the CNP program through the meta-interpreter (`cnp`). Type of `Args` is a `dict`, which is a structure in the form Tag{name:term, ...}. CNP never binds the Tag, so CNP tuples always look like `_{ ... }`.
 
 Programs of any complexity can be composed and run via putting it in the first argument of the `cnp` predicate:
 ```
@@ -146,7 +146,7 @@ Here is a brief summary of CNP language. Examples can be found in `tests.pl`.
 
 ## Extending the interpreter
 
-There are two wayts to extend the interpreter: (1) defining library predicates to introduce something that is available in Prolog into CNP, or (2) defining a new CNP predicate or a CNP operator by giving a body in CNP.
+There are two ways to extend the interpreter: (1) defining library predicates to introduce something that is available in Prolog into CNP, or (2) defining a new CNP predicate or a CNP operator by giving a body in CNP.
 
 To define a library predicate, you add another clause for the cnp:lib, as can be seen in the 'cnp_math.pl' file:
 ```
