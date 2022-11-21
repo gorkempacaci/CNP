@@ -177,4 +177,3 @@ and the CNP interpreter will execute the body for you:
 ?- cnp(map_f(flip), _{as:[1,-2,3], bs:Bs}).
 Bs = [-1, 2, -3].
 ```
-Such higher-order predicates can have multiple arguments and will be executed by the CNP meta-interpreter. 
