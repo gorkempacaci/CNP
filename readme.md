@@ -80,7 +80,7 @@ A = _86{ancestor:georgeVI, descendant:charlesIII} ;
 
 ## Composing and running CNP programs
 
-CNP programs are run through the `cnp` predicate:
+CNP programs are run through the `cnp` predicate (usually named `apply`):
 ```
 cnp(CNPProgram, Args).
 ```
@@ -105,7 +105,7 @@ CNP is built on top of Horn clauses (as in Prolog), so any CNP pure program can 
 AS = [1, 2, 3].
 ```
 
-or it can be used to iterate possible other values for the arguments:
+or it can be used to iterate through other possible values for the arguments:
 ```
 cnp(foldleft(cons), _{b0:B0, as:AS, b:[3,2,1]}).
 B0 = [3, 2, 1],
