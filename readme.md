@@ -120,12 +120,16 @@ Here is a brief summary of CNP language. Examples can be found in `tests.pl`.
 
 ### Elementary predicates
 `id : {a, b}` succeeds when values of `a` and `b` are identical. 
+
 `cons : {a, b, ab}` succeeds when value of `ab` is a list where head is value of `a` and tail is `b`.
+
 `const(N, T) : {N}` succeeds when value of N is T. This is used to introduce constants with a name, like `const(nil, [])`.
 
 ### Logic operators
 `and(P, Q) : N` (`P ^ Q`) gives conjunction of `P : N1` and `Q : N2`, similar to an inner join from Relational Algebra. Names `N` is the union of `N1` an `N2`, and intersection of `N1` and `N2` must be non-empty.
+
 `or(P, Q)` (`P \/ Q`) gives disjunction, where names work like in `and`. 
+
 `andc(P, Q)` (`P ^. Q`) gives relational composition. It's equivalent to `proj(and(P, Q), D)` where `D` projects disjoint arguments of `P` and `Q`. For example, if `P : {a, b}` and `Q : {b, c}`, `andc(P, Q) : {a, c}`.
 
 ### Recursion operators
