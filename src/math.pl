@@ -9,10 +9,10 @@
 :- module(math, []).
 :- multifile cnp:lib/3.
 
-cnp:lib(+,    [a,b,ab], [_{a:A, b:B, ab:C}] >> (C is A+B)). % using anonymous predicates
-cnp:lib(-,    [a,b,ab], [_{a:A, b:B, ab:C}] >> (C is A-B)).
-cnp:lib(*,    [a,b,ab], [_{a:A, b:B, ab:C}] >> (C is A*B)).
-cnp:lib(//,   [a,b,ab], [_{a:A, b:B, ab:C}] >> (C is A/B)).
+cnp:lib(+,    [a,b,ab], math:plus). % using anonymous predicates
+cnp:lib(-,    [a,b,ab], math:minus).
+cnp:lib(*,    [a,b,ab], math:times).
+cnp:lib(/,    [a,b,ab], math:div).
 cnp:lib(eq,   [a,b],    [_{a:A, b:B}] >> (A =:= B)).
 cnp:lib(lt,   [a,b],    [_{a:A, b:B}] >> (A<B)).
 cnp:lib(lte,  [a,b],    [_{a:A, b:B}] >> (A =< B)).
@@ -24,3 +24,16 @@ cnp:lib(nil,  [a],      [_{a:A}] >> (A=[])).
 
 flip(_{a:A, b:B}) :-  (ground(B), A is B * -1) ; 
                       (ground(A), B is A * -1).
+
+plus(_{a:A, b:B, ab:AB}) :- (ground(A), ground(B), AB is A+B);
+                            (ground(A), ground(AB), B is AB-A);
+                            (ground(B), ground(AB), A is AB-B).
+minus(_{a:A, b:B, ab:AB}) :- (ground(A), ground(B), AB is A-B);
+                             (ground(A), ground(AB), B is A-AB);
+                             (ground(B), ground(AB), A is B+AB).
+times(_{a:A, b:B, ab:AB}) :- (ground(A), ground(B), AB is A*B);
+                             (ground(A), ground(AB), B is AB/A);
+                             (ground(B), ground(AB), A is AB/B).
+div(_{a:A, b:B, ab:AB}) :- (ground(A), ground(B), AB is A/B);
+                           (ground(A), ground(AB), B is A/AB);
+                           (ground(B), ground(AB), A is B*AB).
