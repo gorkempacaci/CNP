@@ -86,19 +86,19 @@ cnp(S @ Projs, Args) :-
 
 % == List recursion operators ==
 
-% fold(P) : {b0, as, b} while names(P, [a, b, ab])
-cnp(fold(_), _{b0:B0, as:[], b:B0}).
-cnp(fold(P), _{b0:B0, as:[A|As], b:B}) :-
+% foldr(P) : {b0, as, b} while names(P, [a, b, ab])
+cnp(foldr(_), _{b0:B0, as:[], b:B0}).
+cnp(foldr(P), _{b0:B0, as:[A|As], b:B}) :-
   !,
-  cnp(fold(P), _{b0:B0, as:As, b:Bi}),
+  cnp(foldr(P), _{b0:B0, as:As, b:Bi}),
   cnp(P, _{a:A, b:Bi, ab:B}).
 
-% foldleft(P) : {b0, as, b} while names(P, [a, b, ab])
-cnp(foldleft(_), _{b0:B0, as:[], b:B0}).
-cnp(foldleft(P), _{b0:B0, as:[A|As], b:B}) :-
+% foldl(P) : {b0, as, b} while names(P, [a, b, ab])
+cnp(foldl(_), _{b0:B0, as:[], b:B0}).
+cnp(foldl(P), _{b0:B0, as:[A|As], b:B}) :-
   !,
   cnp(P, _{a:A, b:B0, ab:Bi}),
-  cnp(foldleft(P), _{b0:Bi, as:As, b:B}).
+  cnp(foldl(P), _{b0:Bi, as:As, b:B}).
 
 % map(P) : {as, bs} while names(P, [a, b])
 % map(P), names(P) must be [a, b]
@@ -189,8 +189,8 @@ names(proj(_, []), []) :- !.
 names(proj(_, [_->N|Rest]), [N|RestNames]) :-
   names(proj(_, Rest), RestNames), !.
 names(_ @ Projs, Names) :- names(proj(_, Projs), Names), !.
-names(fold(_), [b0, as, b]) :- !.
-names(foldleft(_), [b0, as, b]) :- !.
+names(foldr(_), [b0, as, b]) :- !.
+names(foldl(_), [b0, as, b]) :- !.
 names(map(_), [as, bs]) :- !.
 names(filter(_), [as, bs]) :- !.
 names(if(C,T,_), Ns) :-

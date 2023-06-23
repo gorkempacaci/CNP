@@ -9,14 +9,14 @@
 :- module(math, []).
 :- multifile cnp:lib/3.
 
-cnp:lib(+,    [a,b,ab], math:plus). % using anonymous predicates
+cnp:lib(+,    [a,b,ab], math:plus).  % using predicate name
 cnp:lib(-,    [a,b,ab], math:minus).
 cnp:lib(*,    [a,b,ab], math:times).
 cnp:lib(/,    [a,b,ab], math:div).
-cnp:lib(eq,   [a,b],    [_{a:A, b:B}] >> (A =:= B)).
+cnp:lib(eq,   [a,b],    [_{a:A, b:B}] >> (A =:= B)). % using anonymous predicates
 cnp:lib(lt,   [a,b],    [_{a:A, b:B}] >> (A<B)).
 cnp:lib(lte,  [a,b],    [_{a:A, b:B}] >> (A =< B)).
-cnp:lib(flip, [a,b],    math:flip). % optional syntax using predicate name
+cnp:lib(flip, [a,b],    math:flip).
 cnp:lib(neg,  [a],      [_{a:A}] >> (A<0)).
 cnp:lib(pos,  [a],      [_{a:A}] >> (A>0)).
 cnp:lib(zero, [a],      [_{a:A}] >> (A=0)).

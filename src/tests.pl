@@ -12,10 +12,10 @@
 
 % PREDICATES DEFINED FOR TESTS
 
-% externally defining a map_f in terms of fold
+% externally defining a map_f in terms of foldr
 cnp:def(map_f(P),
   proj(and(const(b0, []),
-           fold(proj(and(proj(P, [a->a, b->b1]),
+           foldr(proj(and(proj(P, [a->a, b->b1]),
                          proj(cons, [a->b1, b->b, ab->ab])),
                      [a->a, b->b, ab->ab]))),
        [as->as, b->bs])).
@@ -59,10 +59,10 @@ test(proj_id_elim1) :-       once(cnp(proj(id, [a->x]), _{x:_})).
 test(proj_id_fail1) :-         \+ cnp(proj(id, [c->x]), _{x:_}).
 test(proj_id_fail2) :-         \+ cnp(proj(id, [a->x]), _{x:2, y:_}).
 test(proj_and_proj) :-            cnp(proj(and(proj(id, [a->a, b->x]), proj(id, [a->x, b->c])), [a->a, c->b]), _{a:3, b:B}), !, B=3.
-test(proj_and_proj) :-       once(cnp(proj(and(proj(id, [a->a, b->x]), proj(id, [a->x, b->c])), [a->a, c->b]), _{a:3, b:_})).
-test(fold_cons) :-           once(cnp(fold(cons), _{b0:[], as:[1,2,3], b:[1,2,3]})).
-test(fold_plus) :-           once(cnp(fold(+), _{b0:0, as:[1,2,3], b:6})).
-test(foldleft_cons) :-       once(cnp(foldleft(cons), _{b0:[], as:[1,2,3], b:[3,2,1]})).
+test(proj_and_proj) :-        once(cnp(proj(and(proj(id, [a->a, b->x]), proj(id, [a->x, b->c])), [a->a, c->b]), _{a:3, b:_})).
+test(foldr_cons) :-           once(cnp(foldr(cons), _{b0:[], as:[1,2,3], b:[1,2,3]})).
+test(foldr_plus) :-           once(cnp(foldr(+), _{b0:0, as:[1,2,3], b:6})).
+test(foldl_cons) :-           once(cnp(foldl(cons), _{b0:[], as:[1,2,3], b:[3,2,1]})).
 test(map_id) :-                   cnp(map(id), _{as:[1,2,3], bs:[1,2,3]}).
 test(map_flip) :-                 cnp(map(flip), _{as:[1,-2,3], bs:[-1,2,-3]}).
 test(map_f_id) :-            once(cnp(map_f(id), _{as:[1,2,3], bs:[1,2,3]})).

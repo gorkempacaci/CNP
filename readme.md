@@ -12,7 +12,7 @@ This is an implementation of the CNP (Combilog with Names and Projection) Meta-i
 
 ## Release Notes
 
-In this 2022 version the recursion operators (`fold`s) have only one operand, meaning they're in line with the familiar implementations from functional programming. The default value assumed for the second operand is assumed to be `id`. For example, the new `fold(cons)` is equivalent to the previous `fold(cons,id)`. 
+In this 2022 version the recursion operators (`fold`s) have only one operand, meaning they're in line with the familiar implementations from functional programming. The default value assumed for the second operand is assumed to be `id`. For example, the new `foldr(cons)` is equivalent to the previous `foldr(cons,id)`. 
 
 ## What is CNP?
 
@@ -95,19 +95,19 @@ The second argument `Args` is used to facilitate input/output with the CNP progr
 
 Programs of any complexity can be composed and run via putting it in the first argument of the `cnp` predicate:
 ```
-?- cnp(foldleft(cons), _{b0:[], as:[1,2,3], b:List}).
+?- cnp(foldl(cons), _{b0:[], as:[1,2,3], b:List}).
 List = [3, 2, 1].
 ```
 
 CNP is built on top of Horn clauses (as in Prolog), so any CNP pure program can be run in reverse, like so:
 ```
-?- cnp(foldleft(cons), _{b0:[], as:AS, b:[3,2,1]}).
+?- cnp(foldl(cons), _{b0:[], as:AS, b:[3,2,1]}).
 AS = [1, 2, 3].
 ```
 
 or it can be used to iterate through other possible values for the arguments:
 ```
-?- cnp(foldleft(cons), _{b0:B0, as:AS, b:[3,2,1]}).
+?- cnp(foldl(cons), _{b0:B0, as:AS, b:[3,2,1]}).
 B0 = [3, 2, 1],
 AS = [] ;
 B0 = [2, 1],
@@ -138,7 +138,7 @@ Here is a brief summary of CNP language. Examples can be found in `tests.pl`. Na
 
 ### Recursion operators
 
-`fold(P) : {b0, as, b}` where `P : {a, b, ab}` gives a right fold, and `foldleft(P)` a left fold.
+`foldr(P) : {b0, as, b}` where `P : {a, b, ab}` gives a right fold, and `foldl(P)` a left fold.
 
 `map(P) : {as, bs}` where `P : {a, b}` gives a map from `as` to `bs`. If `P` is reversible, `map(P)` is reversible too. 
 
@@ -162,12 +162,12 @@ cnp:lib has three arguments, first gives a name for the predicate, second gives 
 true .
 ```
 
-To define a CNP operator, you add a clause for the `cnp:def`. CNP has a `map` already, but lets say you want to implement a `map` in terms of `fold`, you can do:
+To define a CNP operator, you add a clause for the `cnp:def`. CNP has a `map` already, but lets say you want to implement a `map` in terms of `foldr`, you can do:
 ```
-% map implemented in terms of fold
+% map implemented in terms of foldr
 cnp:def(map_f(P),
   proj(and(const(b0, []),
-           fold(proj(and(proj(P, [a>a, b>b1]),
+           foldr(proj(and(proj(P, [a>a, b>b1]),
                          proj(cons, [a>b1, b>b, ab>ab])),
                      [a>a, b>b, ab>ab]))),
        [as>as, b>bs])).
